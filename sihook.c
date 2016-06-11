@@ -32,11 +32,11 @@ void HookSI(void)
 	{
 		OutputDebugString("PatchSI Success!");
 	}
-	else 
+	else
 	{
 		OutputDebugString("PatchSI Failed!");
 	}
-	
+
 	//hook apis
 	//HookWinApi();
 }
@@ -45,12 +45,24 @@ void UnhookSI(void)
 {
 };
 
+void _cdecl MyThread()
+{
+    HookSI();
+    MSG msg;
+    while(GetMessage(&msg,NULL,0,0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
+
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
     switch (fdwReason)
     {
         case DLL_PROCESS_ATTACH:
-            HookSI();
+            //HookSI();
+            _beginthread(MyThread,0,NULL);
             break;
 
         case DLL_PROCESS_DETACH:
